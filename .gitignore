@@ -1,0 +1,5 @@
+.env
+changelog
+node_modules
+.vscode
+.idea
