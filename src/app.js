@@ -5,12 +5,24 @@ require('dotenv').config();
 // Require external libs
 
 const express = require('express');
+const bodyParser = require('body-parser');
+const logger = require('./config/winston');
+const morgan = require('morgan');
 
+// Setup express
 
 const app = express();
 
-app.get('/', (req, res) => res.send('Hello World!'))
+app.use(bodyParser.json());
+app.use(morgan('combined', { stream: logger.stream }));
 
-const server = app.listen(4000, () => console.log('Example app listening on port 3000!'));
+// Routes definition
+
+
+app.use('/api', require('./routes'));
+
+// Launch server
+
+const server = app.listen(3100, () => logger.info('Umusic api listening on port 3100'));
 
 module.exports = server;
