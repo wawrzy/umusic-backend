@@ -10,6 +10,7 @@ const options = {
     maxsize: 5242880, // 5MB
     maxFiles: 5,
     colorize: false,
+    silent: process.env.TESTING,
   },
   console: {
     level: 'debug',
@@ -17,6 +18,7 @@ const options = {
       winston.format.colorize(),
       winston.format.simple()
     ),
+    silent: process.env.TESTING,
     handleExceptions: true,
     json: false,
     colorize: true,

@@ -1,25 +1,34 @@
 {
   "scripts": {
+    "apidoc": "./node_modules/.bin/apidoc -i src/ -o doc-tmp/ && ./node_modules/.bin/apidoc-markdown2 -p doc-tmp/ -o ./docs/api.md && rm -rf ./doc-tmp/",
     "migration": "./node_modules/.bin/migrate-mongo",
     "start": "mkdir -p logs && node ./src/app.js",
-    "test": "./node_modules/.bin/jest ./tests/"
+    "jest": "./node_modules/.bin/jest ./tests/",
+    "test": "TESTING=true yarn jest"
   },
   "dependencies": {
     "app-root-path": "^2.1.0",
+    "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
+    "jwt-simple": "^0.5.3",
+    "moment": "^2.22.2",
     "mongoose": "^5.2.15",
     "morgan": "^1.9.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "tape": "^4.9.1",
     "winston": "^3.1.0"
   },
   "devDependencies": {
+    "apidoc": "^0.17.6",
+    "apidoc-markdown2": "^0.3.7",
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "jest": "^23.6.0",
     "migrate-mongo": "^3.0.4",
+    "mongodb-memory-server": "^2.2.0",
     "superagent": "^3.8.3",
     "supertest": "^3.3.0"
   }

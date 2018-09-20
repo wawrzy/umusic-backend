@@ -1,0 +1,9 @@
+version: '3'
+services:
+  mon:
+    container_name: mongo_umusic
+    command: --noauth 
+    image: mongo
+    ports:
+      - 27017:27017
+    restart: always
