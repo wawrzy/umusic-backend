@@ -7,19 +7,6 @@ const getToken = function(req, res) {
   if (req.user) {
     const { alias, email, token } = req.user;
     res.send({ alias, email, token });
-  } else {
-    const token = authentication.retrieveToken(req)
-    if (token) {
-      res.status(401).send({
-        errorCode: 'ACCESS_DENIED',
-        message: 'User associated with token was not found'
-      })
-    } else {
-      res.status(401).send({
-        errorCode: 'ACCESS_DENIED',
-        message: 'Access token is missing'
-      })
-    }
   }
 }
 

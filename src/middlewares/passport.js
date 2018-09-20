@@ -72,7 +72,7 @@ module.exports = (passport, app) => {
           if (!req.user) {
             try {
               const user = await User.findOne({ email: email })
-              if (user) {
+              if (user || !req.body.alias) {
                 return done(null, false)
               } else {
                 const newUser = new User()

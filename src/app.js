@@ -55,4 +55,4 @@ var http = require('http');
 const server = http.createServer(app).listen(3100, () => logger.info('Umusic api listening on port 3100'));
 
 module.exports.server = server;
-module.exports.db = mongoose;
+module.exports.mongoose = mongoose;
