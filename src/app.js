@@ -8,21 +8,51 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('./config/winston');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
+const passport = require('passport');
+
+const authentication = require('./middlewares/authentication')
+
+// Setup mongoose
+
+const mongoUriFromEnv = process.env.TESTING ? 'mongodb://localhost/umusic-test' : process.env.DATABASE_URL;
+const mongoUri = mongoUriFromEnv || 'mongodb://localhost/umusic'
+mongoose.Promise = Promise;
+
+mongoose.connect(
+  mongoUri,
+    {
+      autoReconnect: true,
+      useNewUrlParser: true
+    }
+  );
 
 // Setup express
 
 const app = express();
 
+app.set('jwtTokenSecret', 'UMUSIC_TOKEN_SECRET');
+
 app.use(bodyParser.json());
 app.use(morgan('combined', { stream: logger.stream }));
 
-// Routes definition
+// Setup passport
 
+require('./middlewares/passport')(passport, app);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+// Routes definition
 
 app.use('/api', require('./routes'));
 
 // Launch server
 
-const server = app.listen(3100, () => logger.info('Umusic api listening on port 3100'));
+var http = require('http');
 
-module.exports = server;
+const server = http.createServer(app).listen(3100, () => logger.info('Umusic api listening on port 3100'));
+
+module.exports.server = server;
+module.exports.mongoose = mongoose;
