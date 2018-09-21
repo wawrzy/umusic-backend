@@ -43,10 +43,17 @@ require('./middlewares/passport')(passport, app);
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 // Routes definition
 
 app.use('/api', require('./routes'));
+
+// Handling errors
+
+app.use((err, req, res, next) => {
+  if (err && err.isBoom)
+    return res.status(err.output.statusCode).send(err.output.payload);
+})
+
 
 // Launch server
 
