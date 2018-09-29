@@ -1,7 +1,9 @@
 const jwt = require('jwt-simple')
 const boom = require('boom')
 
-const UserModel = require('../models/user').model
+const UserModel = require('../models/user').model;
+const RoomModel = require('../models/room').model
+
 const asyncErrors = require('./error');
 
 exports.isAuthenticated = asyncErrors(async (req, res, next) => {
@@ -34,3 +36,18 @@ exports.isAuthenticated = asyncErrors(async (req, res, next) => {
 });
 
 exports.retrieveToken = (req) => req.headers['authorization'];
+
+exports.isRoomCreator = asyncErrors(async (req, res, next) => {
+  const user = req.user;
+  const roomId = req.params.id;
+
+  try {
+    const room = await RoomModel.findById(roomId);
+
+    if (room.creator.toString() !== user._id.toString())
+      throw boom.unauthorized('User is not the room creator');
+    return next();
+  } catch (err) {
+    throw err.isBoom ? err : boom.badRequest('Room not found');
+  }
+});

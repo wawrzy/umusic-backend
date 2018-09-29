@@ -10,8 +10,7 @@ const logger = require('./config/winston');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const passport = require('passport');
-
-const authentication = require('./middlewares/authentication')
+const http = require('http');
 
 // Setup mongoose
 
@@ -47,17 +46,7 @@ app.use(passport.session());
 
 app.use('/api', require('./routes'));
 
-// Handling errors
-
-app.use((err, req, res, next) => {
-  if (err && err.isBoom)
-    return res.status(err.output.statusCode).send(err.output.payload);
-})
-
-
 // Launch server
-
-var http = require('http');
 
 const server = http.createServer(app).listen(3100, () => logger.info('Umusic api listening on port 3100'));
 

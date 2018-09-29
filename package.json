@@ -3,6 +3,7 @@
     "apidoc": "./node_modules/.bin/apidoc -i src/ -o doc-tmp/ && ./node_modules/.bin/apidoc-markdown2 -p doc-tmp/ -o ./docs/api.md && rm -rf ./doc-tmp/",
     "migration": "./node_modules/.bin/migrate-mongo",
     "start": "mkdir -p logs && node ./src/app.js",
+    "start:dev": "mkdir -p logs && nodemon ./src/app.js",
     "test": "TESTING=true _mocha tests/helper.js tests/**/*.js --exit",
     "test:cov": "TESTING=true istanbul cover _mocha  --reporter lcovonly -- tests/helper.js tests/**/*.js --exit",
     "codecov": "yarn test:cov && codecov",
@@ -22,6 +23,7 @@
     "moment": "^2.22.2",
     "mongoose": "^5.2.15",
     "morgan": "^1.9.1",
+    "nodemon": "^1.18.4",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "winston": "^3.1.0"

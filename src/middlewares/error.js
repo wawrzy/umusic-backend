@@ -3,9 +3,10 @@ const boom = require('boom');
 const asyncErrors = fn => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch((err) => {
     if (!err.isBoom) {
-      return next(boom.badImplementation(err));
+      res.status(500).send('Internal');
     }
-    next(err);
+
+    res.status(err.output.statusCode).send(err.output.payload);
   });
 };
 
