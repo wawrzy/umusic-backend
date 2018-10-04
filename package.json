@@ -6,7 +6,7 @@
     "start:dev": "mkdir -p logs && nodemon ./src/app.js",
     "test": "TESTING=true _mocha tests/helper.js tests/**/*.js --exit",
     "test:cov": "TESTING=true nyc --reporter=text mocha tests/helper.js tests/**/*.js --exit",
-    "codecov": "TESTING=true nyc --reporter=text-lcov mocha tests/helper.js tests/**/*.js --exit | codecov",
+    "codecov": "TESTING=true nyc --reporter=lcov mocha tests/helper.js tests/**/*.js --exit && codecov",
     "logs:clean": "rm -rf ./logs/*"
   },
   "dependencies": {
