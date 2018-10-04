@@ -6,3 +6,5 @@ node_modules
 logs
 coverage
 doc-tmp
+.nyc_output
+

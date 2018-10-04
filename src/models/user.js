@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt-nodejs');
 
+const modelHelpers = require('../helpers/model.js')
+
 const userSchema = new mongoose.Schema();
 
 userSchema.add({
@@ -18,6 +20,8 @@ userSchema.methods.generateHash = function (password) {
 userSchema.methods.validPassword = function (password) {
   return bcrypt.compareSync(password, this.password)
 };
+
+userSchema.method('toJSON', modelHelpers.toJSON);
 
 const User = mongoose.model('User', userSchema);
 
