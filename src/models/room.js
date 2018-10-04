@@ -36,11 +36,15 @@ roomSchema.methods.fetch = async function () {
       users,
       name: this.name,
       createdAt: this.createdAt,
-      id: this._id,
+      _id: this._id,
     };
   } catch (err) {
     return null;
   }
+}
+
+roomSchema.methods.fetchAll = async function () {
+  console.log(this);
 }
 
 const Room = mongoose.model('Room', roomSchema);
