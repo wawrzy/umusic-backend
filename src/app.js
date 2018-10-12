@@ -6,11 +6,16 @@ require('dotenv').config();
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const logger = require('./config/winston');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const http = require('http');
+const io = require('socket.io');
+
+// Require internal libs
+
+const events = require('./events');
+const logger = require('./config/winston');
 
 // Setup mongoose
 
@@ -29,6 +34,7 @@ mongoose.connect(
 // Setup express
 
 const app = express();
+const server = http.createServer(app);
 
 app.set('jwtTokenSecret', 'UMUSIC_TOKEN_SECRET');
 
@@ -46,9 +52,15 @@ app.use(passport.session());
 
 app.use('/api', require('./routes'));
 
+// Setup socket.io
+
+const socket = io(server);
+
+events(socket);
+
 // Launch server
 
-const server = http.createServer(app).listen(3100, () => logger.info('Umusic api listening on port 3100'));
+server.listen(process.env.PORT || 3100, () => logger.info('🚀 Umusic api listening on port 3100 🚀'));
 
 module.exports.server = server;
 module.exports.mongoose = mongoose;

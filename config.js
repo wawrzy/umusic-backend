@@ -9,9 +9,9 @@ module.exports = {
 
   mongodb: {
 
-    url: process.env.TEST,
+    url: process.env.DATABASE_URL || 'mongodb://localhost:27017',
 
-    databaseName: "YOURDATABASENAME",
+    databaseName: "umusic",
 
     options: {
       useNewUrlParser: true, // removes a deprecation warning when connecting

@@ -63,7 +63,7 @@ describe('Test auth', () => {
     const user = { email: "test@test.com", password: "test" };
 
     const response = await request(server)
-      .post('/api/auth/login')
+      .post('/api/auth/signin')
       .send(user);
 
     expect(response.body.token).to.not.empty;

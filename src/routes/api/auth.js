@@ -26,7 +26,7 @@ const getToken = function(req, res) {
 router.post('/signup', passport.authenticate('local-signup'), getToken)
 
 /**
- * @api {post} /api/auth/login Login
+ * @api {post} /api/auth/signin Login
  * @apiName Login
  * @apiGroup Auth
  *
@@ -37,6 +37,6 @@ router.post('/signup', passport.authenticate('local-signup'), getToken)
  * @apiSuccess (200) {String} email  Email of the User.
  * @apiSuccess (200) {String} token  Authentification token of the User.
  */
-router.post('/login', passport.authenticate('local-login'), getToken)
+router.post('/signin', passport.authenticate('local-login'), getToken)
 
 module.exports = router;

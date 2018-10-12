@@ -25,10 +25,10 @@ describe('Test rooms', () => {
     await createUser(users[1]);
 
     const user1Test = await request(server)
-      .post('/api/auth/login')
+      .post('/api/auth/signin')
       .send({ email: "room@test.com", password: "test" })
     const user2Test = await request(server)
-      .post('/api/auth/login')
+      .post('/api/auth/signin')
       .send({ email: "room1@test.com", password: "test" })
 
     expect(user1Test.body.token).not.null;
