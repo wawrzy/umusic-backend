@@ -5,12 +5,14 @@ const { server, mongoose } = require("../src/app");
 
 before(() => {
   global.server = server;
+  global.socket = { id: "imasocket", emit: () => {}, join: () => {} };
   dropDatabase();
 });
 
 after(() => {
   dropDatabase();
   delete global.server;
+  delete global.socket;
 });
 
 beforeEach(() => {

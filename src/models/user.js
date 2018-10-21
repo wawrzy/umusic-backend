@@ -11,6 +11,7 @@ userSchema.add({
   password: String,
   token: String,
   expiration: Number,
+  sockets: [String]
 });
 
 userSchema.methods.generateHash = function (password) {
