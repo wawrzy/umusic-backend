@@ -1,5 +1,6 @@
 const jwt = require('jwt-simple')
 const boom = require('boom')
+const mongoose = require('mongoose');
 
 const UserModel = require('../models/user').model;
 const RoomModel = require('../models/room').model
@@ -46,6 +47,21 @@ exports.isRoomCreator = asyncErrors(async (req, res, next) => {
 
     if (room.creator.toString() !== user._id.toString())
       throw boom.unauthorized('User is not the room creator');
+    return next();
+  } catch (err) {
+    throw err.isBoom ? err : boom.badRequest('Room not found');
+  }
+});
+
+exports.isInRoom = asyncErrors(async (req, res, next) => {
+  const user = req.user;
+  const roomId = req.params.id;
+
+  try {
+    const room = await RoomModel.findOne({ _id: roomId, users: user._id });
+
+    if (!room)
+      throw boom.unauthorized('User is not connected to the room');
     return next();
   } catch (err) {
     throw err.isBoom ? err : boom.badRequest('Room not found');

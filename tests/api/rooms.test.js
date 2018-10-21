@@ -3,6 +3,9 @@ const createUser = require('../helper').createUser;
 const request = require('supertest');
 const chai = require('chai');
 
+const { joinRoom } = require('../../src/events/room');
+const { disconnect } = require('../../src/events/disconnect');
+
 const expect = chai.expect;
 
 describe('Test rooms', () => {
@@ -141,6 +144,33 @@ describe('Test rooms', () => {
     expect(roomTest.body.users.length).to.be.equal(0);
   });
 
+  it('should be able to join room with id', async () => {
+    await joinRoom("imasocket", socket, {
+      roomId: roomWithoutPassword.id,
+      authorization: otherUserToken,
+      password: ''
+    });
+
+    const roomTest = await request(server)
+    .get(`/api/room/join/${roomWithoutPassword.id}`)
+    .set('Authorization', otherUserToken)
+    .send()
+
+    expect(roomTest.statusCode).to.be.equal(200);
+  });
+
+  it('should be able to leave room', async () => {
+    await disconnect("imasocket");
+
+    const roomTest = await request(server)
+    .get(`/api/room/join/${roomWithoutPassword.id}`)
+    .set('Authorization', otherUserToken)
+    .send()
+
+    expect(roomTest.statusCode).to.be.equal(401);
+  });
+
+
   it('should not be able to delete room with an other user', async () => {
     const roomTest = await request(server)
       .delete(`/api/room/delete/${roomWithoutPassword.id}`)
@@ -157,5 +187,20 @@ describe('Test rooms', () => {
       .send()
 
     expect(roomTest.statusCode).to.be.equal(200);
+  });
+
+  it('should not be able to join a deleted room', async () => {
+    await joinRoom("imasocket", socket, {
+      roomId: roomWithoutPassword.id,
+      authorization: otherUserToken,
+      password: ''
+    });
+
+    const roomTest = await request(server)
+    .get(`/api/room/join/${roomWithoutPassword.id}`)
+    .set('Authorization', otherUserToken)
+    .send()
+
+    expect(roomTest.statusCode).to.be.equal(401);
   });
 });

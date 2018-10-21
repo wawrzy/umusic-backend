@@ -43,10 +43,6 @@ roomSchema.methods.fetch = async function () {
   }
 }
 
-roomSchema.methods.fetchAll = async function () {
-  console.log(this);
-}
-
 const Room = mongoose.model('Room', roomSchema);
 
 exports.schema = roomSchema;

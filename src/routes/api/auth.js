@@ -21,7 +21,6 @@ const getToken = function(req, res) {
  * 
  * @apiSuccess (200) {String} alias  Alias of the User.
  * @apiSuccess (200) {String} email  Email of the User.
- * @apiSuccess (200) {String} token  Authentification token of the User.
  */
 router.post('/signup', passport.authenticate('local-signup'), getToken)
 

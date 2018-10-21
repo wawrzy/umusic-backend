@@ -161,4 +161,15 @@ router.get('/:id', authentication.isAuthenticated, asyncErrors(async (req, res) 
   }
 }));
 
+/**
+ * @api {get} /api/room/join/:id Room unique ID.
+ * @apiName Join room
+ * @apiGroup Rooms
+ *
+ * @apiSuccess (200) {String} status  State of connection (always "connected").
+ */
+router.get('/join/:id', authentication.isAuthenticated, authentication.isInRoom, asyncErrors(async (req, res) => {
+  res.send({ status: "connected" });
+}))
+
 module.exports = router;

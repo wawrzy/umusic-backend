@@ -6,6 +6,7 @@ exports.toJSON = function() {
   delete obj.__v
   delete obj.password
   delete obj.token
+  delete obj.sockets
 
   return obj
 }
