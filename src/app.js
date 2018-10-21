@@ -11,6 +11,7 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const http = require('http');
 const io = require('socket.io');
+const cors = require('cors');
 
 // Require internal libs
 
@@ -40,6 +41,17 @@ app.set('jwtTokenSecret', 'UMUSIC_TOKEN_SECRET');
 
 app.use(bodyParser.json());
 app.use(morgan('combined', { stream: logger.stream }));
+
+ // Enable cors to the server
+ 
+ const corsOpt = {
+  origin: '*',
+  methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOpt));
+app.options('*', cors(corsOpt));
 
 // Setup passport
 
