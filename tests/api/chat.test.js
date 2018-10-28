@@ -79,6 +79,41 @@ describe('Test chat', () => {
     expect(alexyJoinTest.statusCode).to.be.equal(200);
   });
 
+  it('should not be able to send message to the room before join', async () => {
+    await sendMessage(io, { ...socket, id: "fake"}, { message: "message", authorization: julienToken });
+
+    const roomMessage = await request(server)
+      .get(`/api/chat/messages/${room.id}`)
+      .set('Authorization', julienToken)
+      .send();
+    
+      expect(roomMessage.statusCode).to.be.equal(200);
+      expect(roomMessage.body).to.be.an('array');
+      expect(roomMessage.body.length).to.be.equal(0);
+    });
+
+  it('should not be able to send message to the room with bad payload', async () => {
+    await sendMessage(io, { ...socket, id: "juliensocket"}, { authorization: julienToken });
+
+    const roomMessage = await request(server)
+      .get(`/api/chat/messages/${room.id}`)
+      .set('Authorization', julienToken)
+      .send();
+    
+      expect(roomMessage.statusCode).to.be.equal(200);
+      expect(roomMessage.body).to.be.an('array');
+      expect(roomMessage.body.length).to.be.equal(0);
+  });
+
+  it('should not be able to get messages from bad room', async () => {
+    const roomMessage = await request(server)
+      .get(`/api/chat/messages/fake`)
+      .set('Authorization', julienToken)
+      .send();
+    
+      expect(roomMessage.statusCode).to.be.equal(400);
+  });
+
   it('should send message to the room', async () => {
     await sendMessage(io, { ...socket, id: "juliensocket"}, { message: "message", authorization: julienToken });
 

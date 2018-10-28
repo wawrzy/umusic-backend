@@ -6,4 +6,5 @@ comment:
   require_head: yes       # [yes :: must have a head report to post]
   branches: null
 ignore:
-  - "tests/helper.js"
+  - "tests/helper.js"     # utils for tests
+  - "src/events/index.js" # only setup socket.io
