@@ -7,6 +7,10 @@ const expect = chai.expect;
 
 describe('Test auth', () => {
 
+    before(async () => {
+      await mongoose.connection.dropDatabase();
+    })
+
     it('should response with a bad request error (missing email)', async () => {
       const missingEmail = { password: "test", alias: "d" };
 

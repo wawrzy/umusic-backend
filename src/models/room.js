@@ -13,7 +13,7 @@ roomSchema.add({
   users: [{ type : ObjectId, ref: 'User' }],
   password: String,
   createdAt: Number,
-  creator: { type : ObjectId, ref: 'User' }
+  creator: { type : ObjectId, ref: 'User' },
 });
 
 // TODO: Add chat in schema

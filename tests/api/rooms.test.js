@@ -23,6 +23,10 @@ describe('Test rooms', () => {
   let userToken = null;
   let otherUserToken = null;
 
+  before(async () => {
+    await mongoose.connection.dropDatabase();
+  })
+
   it('should be login', async () => {
     await createUser(users[0]);
     await createUser(users[1]);
@@ -179,7 +183,7 @@ describe('Test rooms', () => {
 
     expect(roomTest.statusCode).to.be.equal(401);
   });
-
+  
   it('should be able to delete room', async () => {
     const roomTest = await request(server)
       .delete(`/api/room/delete/${roomWithoutPassword.id}`)
