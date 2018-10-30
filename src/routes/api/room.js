@@ -112,8 +112,10 @@ router.delete('/delete/:id', authentication.isAuthenticated, authentication.isRo
  * @apiSuccess (200) {Object[]}  Rooms informations.
  */
 router.get('/all', authentication.isAuthenticated, asyncErrors(async (req, res) => {
+  const name = req.query.name || '';
+
   try {
-    Room.find({ password: '' })
+    Room.find({ password: '', name: { '$regex' : name, '$options' : 'i' } })
       .select('users creator createdAt name')
       .populate('creator')
       .populate('users')

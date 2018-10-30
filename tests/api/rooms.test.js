@@ -94,6 +94,24 @@ describe('Test rooms', () => {
     expect(roomTest.statusCode).to.be.equal(401);
   });
 
+  it('should not be able to update inexisting room', async () => {
+    const roomTest = await request(server)
+      .put(`/api/room/update/ahah`)
+      .set('Authorization', userToken)
+      .send({ name: updatedRoomWithoutPassword.name })
+
+    expect(roomTest.statusCode).to.be.equal(400);
+  });
+
+  it('should not be able to update room without name', async () => {
+    const roomTest = await request(server)
+      .put(`/api/room/update/${roomWithoutPassword.id}`)
+      .set('Authorization', userToken)
+      .send({})
+
+    expect(roomTest.statusCode).to.be.equal(400);
+  });
+
   it('should be able to update room', async () => {
     const roomTest = await request(server)
       .put(`/api/room/update/${roomWithoutPassword.id}`)
