@@ -14,6 +14,7 @@ roomSchema.add({
   password: String,
   createdAt: Number,
   creator: { type : ObjectId, ref: 'User' },
+  videos: [String],
 });
 
 // TODO: Add chat in schema

@@ -52,9 +52,7 @@ const sendMessage = async (io, socket, payload) => {
     if (!isAuthorized)
       return logger.error(`[sendMessage] Token invalid or expired ${authorization}`);
 
-    const e = await addMessageToRoom(io, socket, message);
-
-    return e
+    await addMessageToRoom(io, socket, message);
   } catch (err) {
     logger.error(`[sendMessage] Exception : ${err.message}`)
   }
