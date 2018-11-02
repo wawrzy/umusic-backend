@@ -20,6 +20,43 @@ const addUserToRoom = async (roomId, token, password, socketId) => {
   return true;
 }
 
+const leaveRoom = async (io, socket, payload) => {
+  logger.info(`Leave room with ${socket.id}`);
+  logger.info('Payload : ', payload);
+
+  if (!checkJSON(payload, [ 'authorization' ]))
+    return logger.error(`[leaveRoom] Bad payload ${JSON.stringify(payload)}`);
+
+  const { authorization  } = payload;
+
+  try {
+    const isAuthorized = await checkAuthorization(authorization);
+  
+    if (!isAuthorized)
+      return logger.error(`[leaveRoom] Token invalid or expired ${authorization}`);
+
+    const user = await User.findOne({ token: authorization });
+    const room = await Room.findOne({ users: user._id });
+
+    if (room && room.creator.toString() === user._id.toString()) {
+      await Room.findByIdAndRemove(room._id);
+
+      socket.join(room._id);
+      io.to(room._id).emit('redirectroom', { roomId: null });
+
+      return;
+    }
+
+    if (room) {
+      await Room.update({ _id: room._id }, { $pullAll: { users: [user._id] } });
+
+      socket.emit('redirectroom', { roomId: null });
+    }
+  } catch (err) {
+    logger.error(`[pauseMusic] Exception : ${err.message}`)
+  }  
+}
+
 const joinRoom = async (socketId, socket, payload) => {
   logger.info(`🕹️  Join room with ${socketId}`);
   logger.info('Payload : ', payload);
@@ -46,4 +83,5 @@ const joinRoom = async (socketId, socket, payload) => {
 
 module.exports = {
   joinRoom,
+  leaveRoom,
 }

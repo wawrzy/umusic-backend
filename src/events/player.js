@@ -28,8 +28,68 @@ const currentMusic = async (io, socket, payload) => {
   }
 }
 
+const continueMusic = async (io, socket, payload) => {
+  logger.info(`Continue music`);
+  logger.info('Payload : ', payload);
+
+  if (!checkJSON(payload, [ 'authorization' ]))
+    return logger.error(`[continueMusic] Bad payload ${JSON.stringify(payload)}`);
+
+  const { authorization  } = payload;
+
+  try {
+    const isAuthorized = await checkAuthorization(authorization);
+  
+    if (!isAuthorized)
+      return logger.error(`[continueMusic] Token invalid or expired ${authorization}`);
+
+    const user = await User.findOne({ token: authorization });
+    const room = await Room.findOne({ users: user._id });
+
+    if (room.creator.toString() !== user._id.toString())
+      return logger.error(`[continueMusic] User is not the room owner`);
+
+    if (room) {
+      socket.join(room._id);
+      io.to(room._id).emit('continuevideo', { });
+    }
+  } catch (err) {
+    logger.error(`[continueMusic] Exception : ${err.message}`)
+  }  
+}
+
+const pauseMusic = async (io, socket, payload) => {
+  logger.info(`Pause music`);
+  logger.info('Payload : ', payload);
+
+  if (!checkJSON(payload, [ 'authorization' ]))
+    return logger.error(`[pauseMusic] Bad payload ${JSON.stringify(payload)}`);
+
+  const { authorization  } = payload;
+
+  try {
+    const isAuthorized = await checkAuthorization(authorization);
+  
+    if (!isAuthorized)
+      return logger.error(`[pauseMusic] Token invalid or expired ${authorization}`);
+
+    const user = await User.findOne({ token: authorization });
+    const room = await Room.findOne({ users: user._id });
+
+    if (room.creator.toString() !== user._id.toString())
+      return logger.error(`[pauseMusic] User is not the room owner`);
+
+    if (room) {
+      socket.join(room._id);
+      io.to(room._id).emit('pausevideo', { });
+    }
+  } catch (err) {
+    logger.error(`[pauseMusic] Exception : ${err.message}`)
+  }  
+}
+
 const nextMusic = async (io, socket, payload) => {
-  logger.info(`Current music`);
+  logger.info(`Next music`);
   logger.info('Payload : ', payload);
 
   if (!checkJSON(payload, [ 'authorization' ]))
@@ -46,7 +106,7 @@ const nextMusic = async (io, socket, payload) => {
     const user = await User.findOne({ token: authorization });
     const room = await Room.findOne({ users: user._id });
 
-    if (room.creator !== user._id)
+    if (room.creator.toString() !== user._id.toString())
       return logger.error(`[nextMusic] User is not the room owner`);
 
     if (room) {
@@ -55,12 +115,12 @@ const nextMusic = async (io, socket, payload) => {
       videos.shift();
       await Room.findOneAndUpdate({ _id: room._id }, { $set: { videos } });
 
-      if (videos.length > 0)
-        socket.emit('playvideo', { videoId: videos[0] });
+      socket.join(room._id);
+      io.to(room._id).emit('playvideo', { videoId: videos.length > 0 ? videos[0] : null });
     }
   } catch (err) {
     logger.error(`[nextMusic] Exception : ${err.message}`)
   }  
 }
 
-module.exports = { currentMusic, nextMusic };
+module.exports = { currentMusic, nextMusic, continueMusic, pauseMusic };
