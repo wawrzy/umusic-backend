@@ -53,6 +53,18 @@ describe('Test chat', () => {
     room.id = roomTest.body._id;
   });
 
+
+  it('should not be able to get messages to the room before join', async () => {
+    await sendMessage(io, { ...socket, id: "fake"}, { message: "message", authorization: julienToken });
+
+    const roomMessage = await request(server)
+      .get(`/api/chat/messages/${room.id}`)
+      .set('Authorization', julienToken)
+      .send();
+    
+      expect(roomMessage.statusCode).to.be.equal(401);
+  });
+
   it('should connect to the room', async () => {
     await joinRoom("juliensocket", { ...socket, id: "juliensocket"}, {
       roomId: room.id,
@@ -78,19 +90,6 @@ describe('Test chat', () => {
     expect(julienJoinTest.statusCode).to.be.equal(200);
     expect(alexyJoinTest.statusCode).to.be.equal(200);
   });
-
-  it('should not be able to send message to the room before join', async () => {
-    await sendMessage(io, { ...socket, id: "fake"}, { message: "message", authorization: julienToken });
-
-    const roomMessage = await request(server)
-      .get(`/api/chat/messages/${room.id}`)
-      .set('Authorization', julienToken)
-      .send();
-    
-      expect(roomMessage.statusCode).to.be.equal(200);
-      expect(roomMessage.body).to.be.an('array');
-      expect(roomMessage.body.length).to.be.equal(0);
-    });
 
   it('should not be able to send message to the room with bad payload', async () => {
     await sendMessage(io, { ...socket, id: "juliensocket"}, { authorization: julienToken });
@@ -127,7 +126,7 @@ describe('Test chat', () => {
       expect(roomMessage.body.length).to.be.equal(1);
     });
 
-    it('should receive message from toher user', async () => {
+    it('should receive message from other user', async () => {
   
       const roomMessage = await request(server)
         .get(`/api/chat/messages/${room.id}`)
@@ -139,4 +138,16 @@ describe('Test chat', () => {
         expect(roomMessage.body.length).to.be.equal(1);
       });
 
+    it('should add video to the room', async () => {
+      await sendMessage(io, { ...socket, id: "juliensocket"}, { message: "!video youtube?v=url", authorization: julienToken });
+  
+      const roomMessage = await request(server)
+        .get(`/api/chat/messages/${room.id}`)
+        .set('Authorization', julienToken)
+        .send();
+      
+        expect(roomMessage.statusCode).to.be.equal(200);
+        expect(roomMessage.body).to.be.an('array');
+        expect(roomMessage.body.length).to.be.equal(2);
+      });
 });

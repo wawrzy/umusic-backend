@@ -6,11 +6,29 @@ const User = require('../models/user').model;
 const Chat = require('../models/chat').model;
 const { checkJSON, checkAuthorization } = require('../helpers/check');
 
-const addMessageToRoom = async (io, socket, message) => {
-  const user = await User.findOne({ sockets: socket.id });
+// Chat commands //
+
+const addVideo = async (message, room) => {
+  if (message.search(/!video /i) === -1)
+    return;
+  
+  let video_id = message.split('v=')[1];
+  const ampersandPosition = video_id.indexOf('&');
+  if (ampersandPosition != -1) {
+    video_id = video_id.substring(0, ampersandPosition);
+  }
+  
+  if (video_id && video_id !== '')
+    await Room.update({ _id: room._id }, { $push: { videos: video_id } })
+}
+
+//////////////////
+
+const addMessageToRoom = async (io, socket, message, authorization) => {
+  const user = await User.findOne({ token: authorization });
 
   if (!user)
-    return logger.error(`[sendMessage] user not found with socketId: ${socket.id}`);
+    return logger.error(`[sendMessage] user not found with token: ${authorization}`);
 
   const room = await Room.findOne({ users: user._id });
 
@@ -26,6 +44,8 @@ const addMessageToRoom = async (io, socket, message) => {
 
   try {
     await newMessage.save();
+    await addVideo(message, room);
+    socket.join(room._id);
     io.to(room._id).emit('chat', {
       sender: user.alias,
       createdAt: newMessage.createdAt,
@@ -52,7 +72,7 @@ const sendMessage = async (io, socket, payload) => {
     if (!isAuthorized)
       return logger.error(`[sendMessage] Token invalid or expired ${authorization}`);
 
-    await addMessageToRoom(io, socket, message);
+    await addMessageToRoom(io, socket, message, authorization);
   } catch (err) {
     logger.error(`[sendMessage] Exception : ${err.message}`)
   }

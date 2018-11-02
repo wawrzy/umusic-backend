@@ -3,7 +3,7 @@ const { disconnect } = require('./disconnect');
 const { sendMessage } = require('./chat');
 const { nextMusic, currentMusic } = require('./player');
 
-const handleConnection = (socket) => {
+const handleConnection = (io, socket) => {
   const socketId = socket.id;
 
   socket.on("joinroom", payload => joinRoom(socketId, socket, payload));
@@ -14,7 +14,7 @@ const handleConnection = (socket) => {
 }
 
 const events = (io) => {
-  io.on("connection", handleConnection);
+  io.on("connection", (socket) => handleConnection(io, socket));
 };
 
 module.exports = events;

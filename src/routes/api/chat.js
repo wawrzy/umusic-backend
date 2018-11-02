@@ -19,7 +19,7 @@ router.get('/messages/:id', authentication.isAuthenticated, authentication.isInR
 
     Chat.find({roomId: room._id}, { _id: 0 })
         .select('sender roomId createdAt message')
-        .sort({ createdAt: 'desc' })
+        .sort({ createdAt: 'asc' })
         .populate('sender')
         .exec((err, data) => {
           if (err)

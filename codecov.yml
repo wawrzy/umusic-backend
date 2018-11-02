@@ -8,3 +8,4 @@ comment:
 ignore:
   - "tests/helper.js"     # utils for tests
   - "src/events/index.js" # only setup socket.io
+  - "src/events/player.js" # not finished

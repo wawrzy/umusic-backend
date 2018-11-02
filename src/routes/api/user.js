@@ -7,7 +7,7 @@ const Users = require('../../models/user').model;
 const logger = require('../../config/winston');
 
 /**
- * @api {post} /api/users/me
+ * @api {get} /api/users/me
  * @apiName Get current profile
  * @apiGroup Users
  *
@@ -25,6 +25,31 @@ router.get('/me', authentication.isAuthenticated, asyncErrors(async (req, res) =
       logger.error(err.message);
       throw boom.internal('Internal');
     }
+}));
+
+/**
+ * @api {put} /api/users/me
+ * @apiName Update current profile
+ * @apiGroup Users
+ *
+ * @apiSuccess (200) {String} alias  Alias of the user.
+ * @apiSuccess (200) {String} unique id of the user.
+ * @apiSuccess (200) {String} email of the user.
+ */
+router.put('/me', authentication.isAuthenticated, asyncErrors(async (req, res) => {
+  const { alias, email } = req.body;
+
+  if (!alias && !email)
+    throw boom.badRequest('Missing body parameter(s)');
+
+  try {
+    const user = await Users.findByIdAndUpdate(req.user._id, { alias, email }, { new: true });
+
+    res.send(user);
+  } catch (err) {
+    logger.error(err.message);
+    throw boom.internal('Internal');
+  }
 }));
 
 /**

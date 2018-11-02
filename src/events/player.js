@@ -3,7 +3,7 @@ const { checkJSON, checkAuthorization } = require('../helpers/check');
 const Room = require('../models/room').model;
 const User = require('../models/user').model;
 
-export const currentMusic = async (io, socket, payload) => {
+const currentMusic = async (io, socket, payload) => {
   logger.info(`Current music`);
   logger.info('Payload : ', payload);
 
@@ -25,10 +25,10 @@ export const currentMusic = async (io, socket, payload) => {
       socket.emit('playvideo', { videoId: room.videos[0] });
   } catch (err) {
     logger.error(`[currentMusic] Exception : ${err.message}`)
-  }  
+  }
 }
 
-export const nextMusic = async (io, socket, payload) => {
+const nextMusic = async (io, socket, payload) => {
   logger.info(`Current music`);
   logger.info('Payload : ', payload);
 
@@ -62,3 +62,5 @@ export const nextMusic = async (io, socket, payload) => {
     logger.error(`[nextMusic] Exception : ${err.message}`)
   }  
 }
+
+module.exports = { currentMusic, nextMusic };
