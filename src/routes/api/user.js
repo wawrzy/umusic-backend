@@ -39,7 +39,7 @@ router.get('/me', authentication.isAuthenticated, asyncErrors(async (req, res) =
 router.put('/me', authentication.isAuthenticated, asyncErrors(async (req, res) => {
   const { alias, email } = req.body;
 
-  if (!alias && !email)
+  if (!alias || !email)
     throw boom.badRequest('Missing body parameter(s)');
 
   try {
