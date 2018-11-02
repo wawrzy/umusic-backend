@@ -8,7 +8,7 @@ const { checkJSON, checkAuthorization } = require('../helpers/check');
 
 // Chat commands //
 
-const addVideo = async (message, room) => {
+const addVideo = async (io, message, room) => {
   if (message.search(/!video /i) === -1)
     return;
   
@@ -18,8 +18,13 @@ const addVideo = async (message, room) => {
     video_id = video_id.substring(0, ampersandPosition);
   }
   
-  if (video_id && video_id !== '')
-    await Room.update({ _id: room._id }, { $push: { videos: video_id } })
+  if (video_id && video_id !== '') {
+    const newRoom = await Room.findByIdAndUpdate(room._id, { $push: { videos: video_id } }, { new: true })
+
+    if (newRoom.videos.length === 1) {
+      io.to(newRoom._id).emit('playvideo', { videoId: video_id });
+    }
+  }
 }
 
 //////////////////
@@ -43,9 +48,9 @@ const addMessageToRoom = async (io, socket, message, authorization) => {
   newMessage.roomId = room._id;
 
   try {
-    await newMessage.save();
-    await addVideo(message, room);
     socket.join(room._id);
+    await newMessage.save();
+    await addVideo(io, message, room);
     io.to(room._id).emit('chat', {
       sender: user.alias,
       createdAt: newMessage.createdAt,
