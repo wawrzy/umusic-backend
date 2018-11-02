@@ -9,9 +9,11 @@ const addUserToRoom = async (roomId, token, password, socketId) => {
 
   if (!user || !room || (room.password !== '' && !room.validPassword(password))) {
     return logger.error(`[joinRoom:addUser] Room not found or password invalid`);
-    return false;
   }
 
+  if (room.users.indexOf(user._id) !== -1)
+    return true;
+  await Room.update({ users: user._id }, { $pullAll: { users: [user._id] } });
   await Room.findOneAndUpdate({ _id: roomId }, { $addToSet: { users: user._id } });
   await User.updateOne({ _id: user._id }, { $addToSet: { sockets: socketId } });
 

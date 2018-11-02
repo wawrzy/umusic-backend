@@ -65,6 +65,25 @@ describe('Test users', () => {
       expect(users.body[0].alias).to.be.equal('julien');
   });
 
+  it('should update julien profile', async () => {
+    const users = await request(server)
+      .put('/api/users/me')
+      .set('Authorization', julienToken)
+      .send({ alias: "ok", email: "bojur@ju.com" });
+
+      expect(users.statusCode).to.be.equal(200);
+      expect(users.body.alias).to.be.equal('ok');
+  });
+
+  it('should not update julien profile with bad body', async () => {
+    const users = await request(server)
+      .put('/api/users/me')
+      .set('Authorization', julienToken)
+      .send({ alias: "ok" });
+
+      expect(users.statusCode).to.be.equal(400);
+  });
+
   it('should get all users', async () => {
     const users = await request(server)
       .get('/api/users')
