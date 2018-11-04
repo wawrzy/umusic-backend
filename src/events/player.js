@@ -19,10 +19,14 @@ const currentMusic = async (io, socket, payload) => {
       return logger.error(`[currentMusic] Token invalid or expired ${authorization}`);
 
     const user = await User.findOne({ token: authorization });
+
     const room = await Room.findOne({ users: user._id });
 
-    if (room && room.videos.length > 0)
+    if (room && room.videos.length > 0) {
       socket.emit('playvideo', { videoId: room.videos[0] });
+    } else if (room && room.videos.length === 0) {
+      socket.emit('playvideo', { videoId: null });
+    }
   } catch (err) {
     logger.error(`[currentMusic] Exception : ${err.message}`)
   }

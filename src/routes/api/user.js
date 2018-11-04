@@ -73,5 +73,112 @@ router.get('/', authentication.isAuthenticated, asyncErrors(async (req, res) => 
   }
 }));
 
+/**
+ * @api {post} /api/users/follow
+ * @apiParam {String} userId to follow
+ * @apiName Follow an user
+ * @apiGroup Users
+ *
+ * @apiSuccess (200) {String} Ok.
+ */
+router.post('/follow', authentication.isAuthenticated, asyncErrors(async (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId)
+    throw boom.badRequest('Missing body parameter(s)');
+
+  try {
+    const user = await Users.findById(userId);
+    if (user)
+      await Users.findByIdAndUpdate(req.user._id, { $addToSet: { follow: userId } });
+
+    res.send("Ok");
+  } catch (err) {
+    logger.error(err.message);
+    throw boom.internal('Internal');
+  }
+}));
+
+/**
+ * @api {post} /api/users/unfollow
+ * @apiParam {String} userId to unfollow
+ * @apiName Unfollow an user
+ * @apiGroup Users
+ *
+ * @apiSuccess (200) {String} Ok.
+ */
+router.post('/unfollow', authentication.isAuthenticated, asyncErrors(async (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId)
+    throw boom.badRequest('Missing body parameter(s)');
+
+  try {
+    const user = await Users.findById(userId);
+    if (user)
+      await Users.findByIdAndUpdate(req.user._id, { $pullAll: { follow: [userId] } });
+
+    res.send("Ok");
+  } catch (err) {
+    logger.error(err.message);
+    throw boom.internal('Internal');
+  }
+}));
+
+/**
+ * @api {post} /api/users/followers/:id Unique id
+ * @apiName Get user following
+ * @apiGroup Users
+ *
+ * @apiSuccess (200) {Object[]} Ok.
+ */
+router.get('/followers/:id', authentication.isAuthenticated, asyncErrors(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id)
+    throw boom.badRequest('Missing param');
+
+  try {
+    const user = await Users.findById(id);
+
+    if (user) {
+        const users = await Users.find({ _id: { $in: user.follow } });
+
+        res.send(users);
+    }
+  
+  } catch (err) {
+    logger.error(err.message);
+    throw boom.internal('Internal');
+  }
+}));
+
+/**
+ * @api {get} /api/users/:id Unique id of user
+ * @apiName Get user
+ * @apiGroup Users
+ *
+ * @apiSuccess (200) {Object} user.
+ */
+router.get('/:id', authentication.isAuthenticated, asyncErrors(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id)
+    throw boom.badRequest('Missing body parameter(s)');
+
+  try {
+    const user = await Users.findById(id);
+
+    if (!user)
+      throw boom.notFound('User not found');
+
+    const userJSON = await user.toJSON();
+
+    res.send(userJSON);
+  } catch (err) {
+    logger.error(err.message);
+    throw boom.internal('Internal');
+  }
+}));
 
 module.exports = router;
