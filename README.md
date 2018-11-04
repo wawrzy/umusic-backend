@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/gh/wawrzy/umusic-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/wawrzy/umusic-backend)
+[![Build Status](https://travis-ci.org/wawrzy/umusic-backend.svg?branch=master)](https://travis-ci.org/wawrzy/umusic-backend)
+
 # Umusic-backend
 
 [Api](https://umusic-backend.herokuapp.com/api)
