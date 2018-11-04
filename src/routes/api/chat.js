@@ -7,7 +7,13 @@ const Room = require('../../models/room').model;
 const Chat = require('../../models/chat').model;
 const logger = require('../../config/winston');
 
-
+/**
+ * @api {post} /api/chat/messages/:id Unique room id
+ * @apiName Get room messages
+ * @apiGroup Chat
+ *
+ * @apiSuccess (200) {Object[]} Ok.
+ */
 router.get('/messages/:id', authentication.isAuthenticated, authentication.isInRoom, asyncErrors(async (req, res) => {
   const { id } = req.params;
 

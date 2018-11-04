@@ -65,6 +65,70 @@ describe('Test users', () => {
       expect(users.body[0].alias).to.be.equal('julien');
   });
 
+  it('should follow alexy with julien', async () => {
+    const profileAlexy = await request(server)
+      .get('/api/users/me')
+      .set('Authorization', alexyToken)
+      .send();
+    const profileJulien = await request(server)
+      .get('/api/users/me')
+      .set('Authorization', julienToken)
+      .send();
+    const follow = await request(server)
+      .post('/api/users/follow')
+      .set('Authorization', julienToken)
+      .send({ userId: profileAlexy.body.id });
+    const following = await request(server)
+      .get(`/api/users/followers/${profileJulien.body.id}`)
+      .set('Authorization', julienToken)
+      .send();
+
+    expect(follow.statusCode).to.be.equal(200);
+    expect(following.statusCode).to.be.equal(200);
+    expect(following.body.length).to.be.equal(1);
+  });
+
+  it('should unfollow alexy with julien', async () => {
+    const profileAlexy = await request(server)
+      .get('/api/users/me')
+      .set('Authorization', alexyToken)
+      .send();
+    const profileJulien = await request(server)
+      .get('/api/users/me')
+      .set('Authorization', julienToken)
+      .send();
+    const follow = await request(server)
+      .post('/api/users/unfollow')
+      .set('Authorization', julienToken)
+      .send({ userId: profileAlexy.body.id });
+    const following = await request(server)
+      .get(`/api/users/followers/${profileJulien.body.id}`)
+      .set('Authorization', julienToken)
+      .send();
+
+    expect(follow.statusCode).to.be.equal(200);
+    expect(following.statusCode).to.be.equal(200);
+    expect(following.body.length).to.be.equal(0);
+  });
+
+  it('should not follow with bad id', async () => {
+    const follow = await request(server)
+      .post('/api/users/follow')
+      .set('Authorization', julienToken)
+      .send({ });
+
+    expect(follow.statusCode).to.be.equal(400);
+  });
+
+  it('should not unfollow with bad id', async () => {
+    const follow = await request(server)
+      .post('/api/users/unfollow')
+      .set('Authorization', julienToken)
+      .send({ });
+
+    expect(follow.statusCode).to.be.equal(400);
+  });
+
   it('should update julien profile', async () => {
     const users = await request(server)
       .put('/api/users/me')

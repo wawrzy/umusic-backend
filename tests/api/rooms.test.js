@@ -189,7 +189,7 @@ describe('Test rooms', () => {
     .set('Authorization', otherUserToken)
     .send()
 
-    expect(roomTest.statusCode).to.be.equal(401);
+    expect(roomTest.statusCode).to.be.equal(200);
   });
 
 
