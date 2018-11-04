@@ -32,6 +32,7 @@ Le code sera review par les autres membres du groupe. Si tout est OK, la branche
     * `docker-compose up`
     * `yarn migration up`
     * `yarn start:dev` > <http://localhost:3100>
+ - Lancer le projet sur une autre base de donnée  `DATABASE_URL=uri yarn start`
 
 
 ## Comment contribuer
